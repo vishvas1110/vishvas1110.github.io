@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Basics of Web Development</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+
+  <!-- =============================================
+       STEP 2: STYLE THE WEBPAGE USING CSS
+       - Colors defined via CSS variables
+       - Font, spacing, layout, card styling
+       - Animations for visual delight
+  ============================================= -->
+  <style>
+    /* ─── CSS Variables ─── */
+    :root {
+      --bg: #0b0f1a;
+      --surface: #141826;
+      --card: #1b2133;
+      --border: #2a3250;
+      --accent: #4fffb0;
+      --accent2: #38bdf8;
+      --accent3: #f472b6;
+      --text: #e2e8f0;
+      --muted: #8892aa;
+      --html-color: #f97316;
+      --css-color: #38bdf8;
+      --js-color: #facc15;
+    }
+
+    /* ─── Reset & Base ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── Background mesh ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 20% 10%, rgba(78,255,176,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 80% 80%, rgba(56,189,248,0.07) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── Header ─── */
+    header {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 60px 20px 40px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(78,255,176,0.12);
+      border: 1px solid rgba(78,255,176,0.3);
+      color: var(--accent);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 18px;
+      animation: fadeDown 0.6s ease both;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      animation: fadeDown 0.6s 0.1s ease both;
+    }
+    h1 span { color: var(--accent); }
+
+    .subtitle {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 480px;
+      margin-inline: auto;
+      animation: fadeDown 0.6s 0.2s ease both;
+    }
+
+    /* ─── Main layout ─── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* ─── Step Cards ─── */
+    .step-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideUp 0.6s ease forwards;
+    }
+    .step-card:nth-child(1) { animation-delay: 0.3s; }
+    .step-card:nth-child(2) { animation-delay: 0.5s; }
+    .step-card:nth-child(3) { animation-delay: 0.7s; }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 22px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .step-num {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: grid; place-items: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 600;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .step-num.html { background: rgba(249,115,22,0.15); color: var(--html-color); border: 1px solid rgba(249,115,22,0.3); }
+    .step-num.css  { background: rgba(56,189,248,0.15); color: var(--css-color);  border: 1px solid rgba(56,189,248,0.3); }
+    .step-num.js   { background: rgba(250,204,21,0.15);  color: var(--js-color);   border: 1px solid rgba(250,204,21,0.3); }
+
+    .step-title { font-weight: 700; font-size: 1.1rem; }
+    .step-obj   { font-size: 0.82rem; color: var(--muted); margin-top: 3px; }
+
+    .step-body { padding: 24px 28px; display: flex; flex-direction: column; gap: 18px; }
+
+    /* ─── Code blocks ─── */
+    .code-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      overflow-x: auto;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.7;
+    }
+
+    /* Syntax highlight via spans */
+    .kw  { color: #c084fc; }   /* keyword   */
+    .tag { color: var(--html-color); }
+    .attr{ color: var(--js-color); }
+    .val { color: var(--accent); }
+    .com { color: #4a5568; font-style: italic; }
+    .prop{ color: var(--css-color); }
+    .fn  { color: #f472b6; }
+
+    /* ─── Explanation notes ─── */
+    .explain {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+    .explain strong { color: var(--text); }
+
+    /* ─── STEP 3 DEMO: Interactive Button ─── */
+    .demo-area {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+    .demo-area p { font-size: 0.82rem; color: var(--muted); margin-bottom: 16px; }
+
+    #alertBtn {
+      background: var(--js-color);
+      color: #0b0f1a;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 28px;
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 0 0 0 rgba(250,204,21,0.4);
+    }
+    #alertBtn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(250,204,21,0.25);
+    }
+    #alertBtn:active { transform: scale(0.97); }
+
+    /* custom alert toast */
+    #toast {
+      display: none;
+      margin-top: 16px;
+      background: rgba(250,204,21,0.12);
+      border: 1px solid rgba(250,204,21,0.35);
+      color: var(--js-color);
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 0.88rem;
+      animation: fadeDown 0.3s ease;
+    }
+
+    /* ─── Keyframes ─── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── Footer ─── */
+    footer {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 0 0 40px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─────────────────────────────────────────
+     STEP 1: HTML STRUCTURE
+     - Headings, paragraphs, sections, links
+     - Semantic elements for good practice
+───────────────────────────────────────── -->
+<header>
+  <div class="badge">TASK 1 &nbsp;·&nbsp; 9 DAYS</div>
+  <h1>Basics of <span>Web Development</span></h1>
+  <p class="subtitle">Learn and apply foundational HTML, CSS, and JavaScript concepts.</p>
+</header>
+
+<main>
+
+  <!-- ══════════════ STEP 1: HTML ══════════════ -->
+  <section class="step-card">
+    <div class="step-header">
+      <div class="step-num html">01</div>
+      <div>
+        <div class="step-title">Create a Simple Webpage Using HTML</div>
+        <div class="step-obj">Understand basic HTML elements and structure</div>
+      </div>
+    </div>
+    <div class="step-body">
+
+      <p class="explain">
+        HTML (<strong>HyperText Markup Language</strong>) is the skeleton of every webpage.
+        It uses <strong>tags</strong> to define headings, paragraphs, images, and links.
+        Every HTML document starts with a <strong>boilerplate</strong> structure:
+      </p>
+
+      <div>
+        <div class="code-label">▸ HTML BOILERPLATE</div>
+        <pre><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="val">"en"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="val">"UTF-8"</span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;title&gt;</span>My First Webpage<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+  <span class="com">&lt;!-- Heading --&gt;</span>
+  <span class="tag">&lt;h1&gt;</span>Hello, World!<span class="tag">&lt;/h1&gt;</span>
+
+  <span class="com">&lt;!-- Paragraph --&gt;</span>
+  <span class="tag">&lt;p&gt;</span>This is my first paragraph.<span class="tag">&lt;/p&gt;</span>
+
+  <span class="com">&lt;!-- Image --&gt;</span>
+  <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="val">"photo.jpg"</span> <span class="attr">alt</span>=<span class="val">"A photo"</span><span class="tag">/&gt;</span>
+
+  <span class="com">&lt;!-- Link --&gt;</span>
+  <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="val">"https://example.com"</span><span class="tag">&gt;</span>Visit Example<span class="tag">&lt;/a&gt;</span>
+
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre>
+      </div>
+
+      <p class="explain">
+        <strong>&lt;h1&gt;–&lt;h6&gt;</strong> define headings from most to least important. &nbsp;
+        <strong>&lt;p&gt;</strong> wraps paragraphs. &nbsp;
+        <strong>&lt;img&gt;</strong> embeds images (always include <em>alt</em> for accessibility). &nbsp;
+        <strong>&lt;a href="..."&gt;</strong> creates clickable hyperlinks.
+      </p>
+
+    </div>
+  </section>
+
+  <!-- ══════════════ STEP 2: CSS ══════════════ -->
+  <section class="step-card">
+    <div class="step-header">
+      <div class="step-num css">02</div>
+      <div>
+        <div class="step-title">Style the Webpage Using CSS</div>
+        <div class="step-obj">Learn how to apply styling with CSS</div>
+      </div>
+    </div>
+    <div class="step-body">
+
+      <p class="explain">
+        CSS (<strong>Cascading Style Sheets</strong>) controls the visual appearance.
+        You can add colors, fonts, spacing, and layout adjustments.
+        Link your stylesheet inside <strong>&lt;head&gt;</strong> or write styles directly with a <strong>&lt;style&gt;</strong> tag.
+      </p>
+
+      <div>
+        <div class="code-label">▸ CSS STYLING EXAMPLE</div>
+        <pre><span class="com">/* Select element by tag */</span>
+<span class="tag">body</span> {
+  <span class="prop">background-color</span>: <span class="val">#f0f4f8</span>;
+  <span class="prop">font-family</span>: <span class="val">'Segoe UI', sans-serif</span>;
+  <span class="prop">margin</span>: <span class="val">0</span>;
+  <span class="prop">padding</span>: <span class="val">20px</span>;
+}
+
+<span class="com">/* Select element by class */</span>
+<span class="tag">.card</span> {
+  <span class="prop">background</span>: <span class="val">white</span>;
+  <span class="prop">border-radius</span>: <span class="val">12px</span>;
+  <span class="prop">padding</span>: <span class="val">24px</span>;
+  <span class="prop">box-shadow</span>: <span class="val">0 4px 12px rgba(0,0,0,0.1)</span>;
+}
+
+<span class="com">/* Typography */</span>
+<span class="tag">h1</span> {
+  <span class="prop">color</span>: <span class="val">#1a202c</span>;
+  <span class="prop">font-size</span>: <span class="val">2rem</span>;
+}
+
+<span class="com">/* Layout with Flexbox */</span>
+<span class="tag">.container</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">gap</span>: <span class="val">16px</span>;
+  <span class="prop">justify-content</span>: <span class="val">center</span>;
+}</pre>
+      </div>
+
+      <p class="explain">
+        Selectors target elements: <strong>tag</strong> names, <strong>.class</strong> names, or <strong>#id</strong> values.
+        Properties like <strong>color</strong>, <strong>font-size</strong>, <strong>margin</strong>, and <strong>padding</strong> control looks.
+        <strong>Flexbox</strong> (<code>display: flex</code>) is the easiest way to build layouts.
+      </p>
+
+    </div>
+  </section>
+
+  <!-- ══════════════ STEP 3: JAVASCRIPT ══════════════ -->
+  <section class="step-card">
+    <div class="step-header">
+      <div class="step-num js">03</div>
+      <div>
+        <div class="step-title">Add Basic JavaScript for Interactivity</div>
+        <div class="step-obj">Implement simple interactions using JavaScript</div>
+      </div>
+    </div>
+    <div class="step-body">
+
+      <p class="explain">
+        JavaScript makes pages <strong>interactive</strong>. You can listen for user events
+        (like a button click) and run code in response.
+        Add a <strong>&lt;script&gt;</strong> tag at the bottom of your HTML body.
+      </p>
+
+      <div>
+        <div class="code-label">▸ BUTTON WITH CLICK EVENT</div>
+        <pre><span class="com">&lt;!-- HTML --&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">id</span>=<span class="val">"myBtn"</span><span class="tag">&gt;</span>Click Me!<span class="tag">&lt;/button&gt;</span>
+
+<span class="com">&lt;!-- JavaScript --&gt;</span>
+<span class="tag">&lt;script&gt;</span>
+  <span class="com">// 1. Get a reference to the button</span>
+  <span class="kw">const</span> btn = document.<span class="fn">getElementById</span>(<span class="val">'myBtn'</span>);
+
+  <span class="com">// 2. Listen for the 'click' event</span>
+  btn.<span class="fn">addEventListener</span>(<span class="val">'click'</span>, <span class="kw">function</span>() {
+
+    <span class="com">// 3. Run this code when clicked</span>
+    <span class="fn">alert</span>(<span class="val">'Hello! Button was clicked! 🎉'</span>);
+  });
+<span class="tag">&lt;/script&gt;</span></pre>
+      </div>
+
+      <p class="explain">
+        <strong>getElementById()</strong> finds an HTML element by its <em>id</em>. &nbsp;
+        <strong>addEventListener('click', fn)</strong> runs a function every time the button is clicked. &nbsp;
+        <strong>alert()</strong> shows a browser popup message — great for testing!
+      </p>
+
+      <!-- Live Demo -->
+      <div class="demo-area">
+        <p>⬇ Live demo — try the button below</p>
+        <button id="alertBtn">Click Me! 🎉</button>
+        <div id="toast">✅ Button clicked! JavaScript is working perfectly.</div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  ApexPlanet Software Pvt Ltd &nbsp;·&nbsp; Task 1 of 9 Days
+</footer>
+
+<!-- =============================================
+     STEP 3 (continued): JavaScript in action
+     Instead of a plain alert(), we show a
+     styled toast message for better UX.
+============================================= -->
+<script>
+  const btn   = document.getElementById('alertBtn');
+  const toast = document.getElementById('toast');
+  let   timer;
+
+  btn.addEventListener('click', function () {
+    // Show toast
+    toast.style.display = 'block';
+
+    // Reset animation so it replays on each click
+    toast.style.animation = 'none';
+    toast.offsetHeight; // reflow trick
+    toast.style.animation = 'fadeDown 0.3s ease';
+
+    // Auto-hide after 3 seconds
+    clearTimeout(timer);
+    timer = setTimeout(() => { toast.style.display = 'none'; }, 3000);
+  });
+</script>
+
+</body>
+</html>
